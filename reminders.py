@@ -1,4 +1,3 @@
-import json
 from settings import *
 
 db = SQLAlchemy(app)
@@ -11,7 +10,7 @@ class Reminder(db.Model):
     time = db.Column(db.DateTime, nullable=False)
 
     def json(self):
-        return {'id': self.id, 'title': self.title, 'time': self.time, }
+        return {'id': self.id, 'title': self.title, 'time': self.time.__str__() }
 
     def add(_title, _time,):
         '''function to add reminder to database using _title, _time

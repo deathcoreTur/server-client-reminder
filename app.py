@@ -1,49 +1,20 @@
-import redis
-from flask import Flask, render_template
-from flask_socketio import SocketIO
+from flask import Flask
+from flask_socketio import SocketIO, emit
 
+from reminders import *
 
-app = Flask(__name__)
-# db = redis.StrictRedis('127.0.0.1', 6379, 0)
+# App exist in setting
+# app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 
-@app.route('/')
-def main():
-    return render_template('main.html')
-
-
-@app.route('/reminders/')
-def reminders():
-    return render_template('reminders.html')
-
-
-@app.route('/add')
-def add_reminder():
-    return render_template('add_reminder.html')
-
-
-# @socketio.on('connect', namespace='/dd')
-# def ws_conn():
-#     c = db.incr('connected')
-#     socketio.emit('msg', {'count': c}, namespace='/dd')
-
-
-# @socketio.on('disconnect', namespace='/dd')
-# def ws_disconn():
-#     print('disconnect')
-#     c = db.decr('connected')
-#     socketio.emit('msg', {'count': c}, namespace='/dd')
-
-
-# @socketio.on('reminder', namespace='/dd')
-# def ws_reminder(message):
-#     db.lpush('list-reminders', message['reminder'])
-#     # list_reminders = []
-#     # while (db.llen('list-reminders') != 0):
-#     #     list_reminders.append(db.lpop('list-reminders').decode("utf-8"))
-#     socketio.emit('reminder', {'reminder': message['reminder']}, namespace="/dd")
+@socketio.on('get_reminders')
+def socket_get_reminders():
+    print('Get reminders with API')
+    data = Reminder.get_all_reminders()
+    emit('reminders_response', {'data': data})
 
 
 if __name__ == '__main__':
-    socketio.run(app, "0.0.0.0", port=5000)
+    socketio.run(app, port=8000)
