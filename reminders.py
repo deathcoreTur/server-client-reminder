@@ -18,6 +18,7 @@ class Reminder(db.Model):
         new_reminder = Reminder(title=_title, time=_time)
         db.session.add(new_reminder)
         db.session.commit()
+        return new_reminder
 
     def get_all_reminders():
         '''function to get all reminders in our database'''
